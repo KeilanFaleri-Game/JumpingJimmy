@@ -1,20 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "HoveringPlatform.h"
+
+#include "Checkpoint.h"
 #include "Components/BoxComponent.h"
 #include "PaperSpriteComponent.h"
 
-
 // Sets default values
-AHoveringPlatform::AHoveringPlatform()
+ACheckpoint::ACheckpoint()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    BoxComponent = CreateDefaultSubobject<UBoxComponent>("HoveringBox");
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>("EnemyBox");
     RootComponent = BoxComponent;
-    BoxComponent->SetCollisionProfileName("BlockAll");
-    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    BoxComponent->SetCollisionProfileName("NoCollision");
+    BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetEnableGravity(false);
     BoxComponent->GetBodyInstance()->bLockZRotation = true;
@@ -23,22 +23,22 @@ AHoveringPlatform::AHoveringPlatform()
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->GetBodyInstance()->bLockXTranslation = true;
 
-    PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("HoveringSprite");
-    PlayerSpriteComponent->SetCollisionProfileName("NoCollision");
-    PlayerSpriteComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-    PlayerSpriteComponent->SetupAttachment(RootComponent);
+    CheckpointSprite = CreateDefaultSubobject<UPaperSpriteComponent>("EnemySprite");
+    CheckpointSprite->SetCollisionProfileName("NoCollision");
+    CheckpointSprite->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    CheckpointSprite->SetupAttachment(RootComponent);
 
 }
 
 // Called when the game starts or when spawned
-void AHoveringPlatform::BeginPlay()
+void ACheckpoint::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
 // Called every frame
-void AHoveringPlatform::Tick(float DeltaTime)
+void ACheckpoint::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 

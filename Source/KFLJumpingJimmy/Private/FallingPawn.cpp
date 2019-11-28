@@ -19,7 +19,7 @@ AFallingPawn::AFallingPawn()
     BoxComponent->SetCollisionProfileName("BlockAll");
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     BoxComponent->SetSimulatePhysics(true);
-    BoxComponent->SetEnableGravity(true);
+    //BoxComponent->SetEnableGravity(true);
     BoxComponent->GetBodyInstance()->bLockXRotation = true;
     BoxComponent->GetBodyInstance()->bLockYRotation = true;
     BoxComponent->GetBodyInstance()->bLockZRotation = true;
@@ -83,7 +83,7 @@ void AFallingPawn::Tick(float DeltaTime)
         //SET's the Actors new Location
         SetActorLocation(NewLocation);
     }
-    if (GetActorLocation().Z < -800.0f)
+    if (GetActorLocation().Z < -800.0f || GetActorLocation().Z > 3000.0f)
     {
         SetActorLocation(CheckPoint);
     }
