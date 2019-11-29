@@ -13,8 +13,7 @@ ACheckpoint::ACheckpoint()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>("EnemyBox");
     RootComponent = BoxComponent;
-    BoxComponent->SetCollisionProfileName("NoCollision");
-    BoxComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+    BoxComponent->SetCollisionProfileName("Checkpoint");
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetEnableGravity(false);
     BoxComponent->GetBodyInstance()->bLockZRotation = true;
@@ -22,6 +21,7 @@ ACheckpoint::ACheckpoint()
     BoxComponent->GetBodyInstance()->bLockXRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->GetBodyInstance()->bLockXTranslation = true;
+    BoxComponent->ComponentTags.Add("Checkpoint");
 
     CheckpointSprite = CreateDefaultSubobject<UPaperSpriteComponent>("EnemySprite");
     CheckpointSprite->SetCollisionProfileName("NoCollision");

@@ -2,9 +2,11 @@
 
 
 #include "FallingPawn.h"
+#include "Checkpoint.h"
 #include "PaperSpriteComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "EngineUtils.h"
 #include "Components/BoxComponent.h"
 #include "..\Public\FallingPawn.h"
 
@@ -16,7 +18,9 @@ AFallingPawn::AFallingPawn()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>("playerBox");
     RootComponent = BoxComponent;
+    BoxComponent->SetNotifyRigidBodyCollision(true);
     BoxComponent->SetCollisionProfileName("BlockAll");
+    BoxComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
     BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
     BoxComponent->SetSimulatePhysics(true);
     //BoxComponent->SetEnableGravity(true);
@@ -24,6 +28,7 @@ AFallingPawn::AFallingPawn()
     BoxComponent->GetBodyInstance()->bLockYRotation = true;
     BoxComponent->GetBodyInstance()->bLockZRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
+    BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AFallingPawn::OnHit);
 
     PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("playerSprite");
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");
@@ -87,6 +92,7 @@ void AFallingPawn::Tick(float DeltaTime)
     {
         SetActorLocation(CheckPoint);
     }
+
 }
 
 // Called to bind functionality to input
@@ -105,6 +111,21 @@ void AFallingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
     PlayerInputComponent->BindAxis("MoveUp",
         this,
         &AFallingPawn::MoveUp);
+}
+
+void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "POOP " + OtherComp->GetName());
+
+    if (OtherComp->ComponentHasTag("Checkpoint"))
+    {
+        for (TActorIterator<ACheckpoint> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+        {
+            ACheckpoint* tempCheckPoint = Cast<ACheckpoint>(*ActorItr);
+
+            CheckPoint = tempCheckPoint->GetActorLocation();
+        }
+    }
 }
 
 
