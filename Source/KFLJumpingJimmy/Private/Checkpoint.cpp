@@ -11,7 +11,7 @@ ACheckpoint::ACheckpoint()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-    BoxComponent = CreateDefaultSubobject<UBoxComponent>("EnemyBox");
+    BoxComponent = CreateDefaultSubobject<UBoxComponent>("Checkpoint");
     RootComponent = BoxComponent;
     BoxComponent->SetCollisionProfileName("Checkpoint");
     BoxComponent->SetSimulatePhysics(false);

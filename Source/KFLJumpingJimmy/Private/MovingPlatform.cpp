@@ -71,7 +71,7 @@ void AMovingPlatform::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
     // Patrol Goal Checks
-    if (CurrentPatrolPoint)
+    if (CurrentPatrolPoint && bPatrol)
     {
         FVector Delta = GetActorLocation() - CurrentPatrolPoint->GetActorLocation();
         float DistanceToGoal = Delta.Size();
@@ -81,7 +81,7 @@ void AMovingPlatform::Tick(float DeltaTime)
         {
             MoveToNextPatrolPoint();
         }
-        SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(), CurrentPatrolPoint->GetActorLocation(), DeltaTime, 600.f));
+        SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(), CurrentPatrolPoint->GetActorLocation(), DeltaTime, 300.f));
     }
 }
 

@@ -2,7 +2,9 @@
 
 
 #include "EnemyActor.h"
+#include "FallingPawn.h"
 #include "Components/BoxComponent.h"
+#include "EngineUtils.h"
 #include "PaperSpriteComponent.h"
 
 // Sets default values
@@ -13,8 +15,7 @@ AEnemyActor::AEnemyActor()
 
     BoxComponent = CreateDefaultSubobject<UBoxComponent>("EnemyBox");
     RootComponent = BoxComponent;
-    BoxComponent->SetCollisionProfileName("BlockAll");
-    BoxComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+    BoxComponent->SetCollisionProfileName("Checkpoint");
     BoxComponent->SetSimulatePhysics(false);
     BoxComponent->SetEnableGravity(false);
     BoxComponent->GetBodyInstance()->bLockZRotation = true;
@@ -22,6 +23,7 @@ AEnemyActor::AEnemyActor()
     BoxComponent->GetBodyInstance()->bLockXRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->GetBodyInstance()->bLockXTranslation = true;
+    BoxComponent->ComponentTags.Add("Enemy");
 
     PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("EnemySprite");
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");
@@ -35,7 +37,16 @@ AEnemyActor::AEnemyActor()
 void AEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+    if (bPatrol)
+    {
+        MoveToNextPatrolPoint();
+    }
+
+    for (TActorIterator<AFallingPawn> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+    {
+        Target = Cast<AFallingPawn>(*ActorItr);
+    }
 }
 
 // Called every frame
@@ -43,5 +54,50 @@ void AEnemyActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+    if (CurrentPatrolPoint)
+    {
+        FVector Delta = GetActorLocation() - CurrentPatrolPoint->GetActorLocation();
+        float DistanceToGoal = Delta.Size();
+
+        // Check if we are within 50 .. 100(Better with 2D) units of our goal, if so - pick a new patrol point
+        if (DistanceToGoal < 100)
+        {
+            MoveToNextPatrolPoint();
+        }
+        SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(), CurrentPatrolPoint->GetActorLocation(), DeltaTime, 300.f));
+    }
+
+    //IF Target is NOT EQUAL to nullptr
+    if (Target != nullptr && !(bPatrol))
+    {
+        //DECLARE a variable called targetLocation of type FVector and assign it to the return value of FMath::VInterpConstantTo(..) passing in --> GetActorLocation(), Target->GetActorLocation(), DeltaTime, 600.0f
+        FVector targetLocation = FMath::VInterpConstantTo(GetActorLocation(), Target->GetActorLocation(), DeltaTime, 600.0f);
+        //CALL  SetActorLocation(..) passing in targetLocation
+        SetActorLocation(targetLocation);
+    }
+    //ENDIF Target is NOT EQUAL to nullptr
+
+}
+
+void AEnemyActor::MoveToNextPatrolPoint()
+{
+    if (CurrentPatrolPoint == nullptr || CurrentPatrolPoint == SecondPatrolPoint)
+    {
+        CurrentPatrolPoint = FirstPatrolPoint;
+
+    }
+    else
+    {
+        CurrentPatrolPoint = SecondPatrolPoint;
+    }
+
+    FVector Direction = GetActorLocation() - CurrentPatrolPoint->GetActorLocation();
+    Direction.Normalize();
+
+    FRotator NewLookAt = FRotationMatrix::MakeFromX(Direction).Rotator();
+    NewLookAt.Pitch = 0.0f;
+    NewLookAt.Roll = 0.0f;
+    NewLookAt.Yaw += -180.0f;
+    SetActorRotation(NewLookAt);
 }
 

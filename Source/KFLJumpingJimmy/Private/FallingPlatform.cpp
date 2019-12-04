@@ -47,10 +47,14 @@ void AFallingPlatform::Tick(float DeltaTime)
 
     if (GetActorLocation().Z < -800.0f)
     {
-        SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 2700.0f));
+        SetActorLocation(FVector(GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z + 2700.0f), false, nullptr, ETeleportType::TeleportPhysics);
     }
-
-    
-
 }
+
+
+// When pressing up arrow
+    // Check if we are on elavator (get overlapping actors)
+        // If we found overlapping actors (array is larger than 0)
+            // Check if the object is the elavator (tags)
+                // if object does, move it the same way as player
 

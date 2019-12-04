@@ -29,4 +29,25 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+    /* Let the guard go on patrol */
+    UPROPERTY(EditInstanceOnly, Category = "AI")
+        bool bPatrol;
+
+    /* First of two patrol points to patrol between */
+    UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
+        AActor* FirstPatrolPoint;
+
+    /* Second of two patrol points to patrol between */
+    UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "bPatrol"))
+        AActor* SecondPatrolPoint;
+
+    // The current point the actor is either moving to or standing at
+    AActor* CurrentPatrolPoint;
+
+    UFUNCTION() //WIthout this, the function will be inlined and optimized out
+        void MoveToNextPatrolPoint();
+
+    UPROPERTY(EditInstanceOnly, Category = "AI", meta = (EditCondition = "Target"))
+        AActor* Target;
+
 };

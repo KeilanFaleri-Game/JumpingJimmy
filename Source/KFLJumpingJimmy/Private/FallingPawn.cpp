@@ -3,6 +3,7 @@
 
 #include "FallingPawn.h"
 #include "Checkpoint.h"
+#include "EnemyActor.h"
 #include "PaperSpriteComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -90,7 +91,7 @@ void AFallingPawn::Tick(float DeltaTime)
     }
     if (GetActorLocation().Z < -800.0f || GetActorLocation().Z > 3000.0f)
     {
-        SetActorLocation(CheckPoint);
+        SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
     }
 
 }
@@ -126,6 +127,12 @@ void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Other
             CheckPoint = tempCheckPoint->GetActorLocation();
         }
     }
+
+    if (OtherComp->ComponentHasTag("Enemy"))
+    {
+        for (TActorIterator<AEnemyActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+        {
+            SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
+        }
+    }
 }
-
-
