@@ -3,6 +3,8 @@
 
 #include "EnemyActor.h"
 #include "FallingPawn.h"
+#include "Perception/PawnSensingComponent.h"
+#include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
 #include "EngineUtils.h"
 #include "PaperSpriteComponent.h"
@@ -29,8 +31,11 @@ AEnemyActor::AEnemyActor()
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");
     PlayerSpriteComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     PlayerSpriteComponent->SetupAttachment(RootComponent);
+    
+    PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("AI");
 
-
+    //SUBSCRIBE to the PawnSensingComponent's OnSeePawn event passing in (this, &AAIGuard::OnPawnSeen)
+    PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyActor::OnPawnSeen);
 }
 
 // Called when the game starts or when spawned
@@ -101,3 +106,24 @@ void AEnemyActor::MoveToNextPatrolPoint()
     SetActorRotation(NewLookAt);
 }
 
+void AEnemyActor::PostInitializeComponents()
+{
+    Super::PostInitializeComponents();
+}
+
+void AEnemyActor::OnPawnSeen(APawn* SeenPawn)
+{
+    //TODO Week 10b:
+    if (SeenPawn == nullptr)
+    {
+        return;
+    }
+
+    //TODO Week 10b:
+    //SET TargetActor to the SeenPawn (This can now be used to Implement a Chase behavior)
+    TargetActor = SeenPawn;
+
+
+    bPatrol = false;
+
+}
