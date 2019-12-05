@@ -34,14 +34,18 @@ AEnemyActor::AEnemyActor()
     
     PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("AI");
 
-    //SUBSCRIBE to the PawnSensingComponent's OnSeePawn event passing in (this, &AAIGuard::OnPawnSeen)
-    PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyActor::OnPawnSeen);
+
 }
 
 // Called when the game starts or when spawned
 void AEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+    //SUBSCRIBE to the PawnSensingComponent's OnSeePawn event passing in (this, &AAIGuard::OnPawnSeen)
+    PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyActor::OnPawnSeen);
+
+    bPatrol = true;
 
     if (bPatrol)
     {
@@ -119,10 +123,11 @@ void AEnemyActor::OnPawnSeen(APawn* SeenPawn)
         return;
     }
 
+
     //TODO Week 10b:
     //SET TargetActor to the SeenPawn (This can now be used to Implement a Chase behavior)
     TargetActor = SeenPawn;
-
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "POOP " + TargetActor->GetName());
 
     bPatrol = false;
 
