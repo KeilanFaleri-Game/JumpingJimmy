@@ -16,8 +16,6 @@ public:
 	// Sets default values for this actor's properties
 	AEnemyActor();
 
-    virtual void PostInitializeComponents() override;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -27,8 +25,6 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-    UPROPERTY(VisibleAnywhere, Category = "Components")
-        class UPawnSensingComponent* PawnSensingComponent;
 
     UPROPERTY(EditAnywhere, Category = "Collision Box")
         class UBoxComponent* BoxComponent;
@@ -36,8 +32,11 @@ public:
     UPROPERTY(EditAnywhere, Category = "Visual")
         class UPaperSpriteComponent* PlayerSpriteComponent;
 
+    UPROPERTY(EditAnywhere, Category = "Collision Box")
+        class USphereComponent* AICollision;
+
     /* Let the guard go on patrol */
-    UPROPERTY(EditInstanceOnly, Category = "AI")
+    UPROPERTY(EditAnywhere, Category = "AI")
         bool bPatrol;
 
     /* First of two patrol points to patrol between */
@@ -55,7 +54,10 @@ public:
         void MoveToNextPatrolPoint();
 
     UFUNCTION()
-        void OnPawnSeen(APawn* SeenPawn);
+    void OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION()
+    void OnHit2(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
     UPROPERTY(EditInstanceOnly)
         AActor* Target;

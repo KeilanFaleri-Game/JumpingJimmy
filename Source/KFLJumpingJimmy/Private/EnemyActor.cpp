@@ -3,9 +3,8 @@
 
 #include "EnemyActor.h"
 #include "FallingPawn.h"
-#include "Perception/PawnSensingComponent.h"
-#include "DrawDebugHelpers.h"
 #include "Components/BoxComponent.h"
+#include "Components/SphereComponent.h"
 #include "EngineUtils.h"
 #include "PaperSpriteComponent.h"
 
@@ -25,15 +24,18 @@ AEnemyActor::AEnemyActor()
     BoxComponent->GetBodyInstance()->bLockXRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->GetBodyInstance()->bLockXTranslation = true;
+    BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AEnemyActor::OnHit2);
     BoxComponent->ComponentTags.Add("Enemy");
+
+    AICollision = CreateDefaultSubobject<USphereComponent>("AIBox");
+    AICollision->SetCollisionProfileName("Checkpoint");
+    AICollision->OnComponentBeginOverlap.AddDynamic(this, &AEnemyActor::OnHit);
+    AICollision->SetupAttachment(RootComponent);
 
     PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("EnemySprite");
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");
     PlayerSpriteComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
     PlayerSpriteComponent->SetupAttachment(RootComponent);
-    
-    PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>("AI");
-
 
 }
 
@@ -41,9 +43,6 @@ AEnemyActor::AEnemyActor()
 void AEnemyActor::BeginPlay()
 {
 	Super::BeginPlay();
-
-    //SUBSCRIBE to the PawnSensingComponent's OnSeePawn event passing in (this, &AAIGuard::OnPawnSeen)
-    PawnSensingComponent->OnSeePawn.AddDynamic(this, &AEnemyActor::OnPawnSeen);
 
     bPatrol = true;
 
@@ -110,25 +109,32 @@ void AEnemyActor::MoveToNextPatrolPoint()
     SetActorRotation(NewLookAt);
 }
 
-void AEnemyActor::PostInitializeComponents()
+void AEnemyActor::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    Super::PostInitializeComponents();
-}
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "POOP " + OtherComp->GetName());
 
-void AEnemyActor::OnPawnSeen(APawn* SeenPawn)
-{
-    //TODO Week 10b:
-    if (SeenPawn == nullptr)
+    if (OtherComp != nullptr)
     {
-        return;
+        if (OtherComp->ComponentHasTag("Player"))
+        {
+            bPatrol = false;
+        }
     }
 
+}
 
-    //TODO Week 10b:
-    //SET TargetActor to the SeenPawn (This can now be used to Implement a Chase behavior)
-    TargetActor = SeenPawn;
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "POOP " + TargetActor->GetName());
+void AEnemyActor::OnHit2(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, "POOP " + OtherComp->GetName());
 
-    bPatrol = false;
+    if (OtherComp != nullptr)
+    {
+        if (OtherComp->ComponentHasTag("Player"))
+        {
+            SetActorLocation(FirstPatrolPoint->GetActorLocation());
+            bPatrol = true;
+        }
+    }
 
 }
+

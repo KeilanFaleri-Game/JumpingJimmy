@@ -30,6 +30,7 @@ AFallingPawn::AFallingPawn()
     BoxComponent->GetBodyInstance()->bLockZRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->OnComponentBeginOverlap.AddDynamic(this, &AFallingPawn::OnHit);
+    BoxComponent->ComponentTags.Add("Player");
 
     PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("playerSprite");
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");
@@ -93,6 +94,7 @@ void AFallingPawn::Tick(float DeltaTime)
     {
         SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
     }
+    
 
 }
 
@@ -135,4 +137,13 @@ void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Other
             SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
         }
     }
+
+    if (OtherComp->ComponentHasTag("Win"))
+    {
+        for (TActorIterator<AEnemyActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
+        {
+            SetActorLocation(FVector(29295.0,0,100), false, nullptr, ETeleportType::TeleportPhysics);
+        }
+    }
 }
+
