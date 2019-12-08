@@ -36,7 +36,7 @@ void UJumpComponent::Jump()
 
         AudioComponent->SetSound(JumpSound);
 
-        AudioComponent->Play();
+        AudioComponent->Play(0.5f);
     }
 
 }

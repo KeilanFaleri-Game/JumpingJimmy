@@ -12,11 +12,6 @@ AMyHUD::AMyHUD()
         PlayerGuiClass = playerHud.Class;
 }
 
-int AMyHUD::GetGameTimer()
-{
-    return GameTimer;
-}
-
 void AMyHUD::BeginPlay()
 {
     //Instantiate the PlayerGuiClass and assign the instance to PlayerGui
@@ -25,9 +20,4 @@ void AMyHUD::BeginPlay()
     //Add the PlayerGui to the HUD's viewport
     PlayerGui->AddToViewport();
 
-}
-
-void AMyHUD::Tick(float DeltaTime)
-{
-    GameTimer += DeltaTime;
 }

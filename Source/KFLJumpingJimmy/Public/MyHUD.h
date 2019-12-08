@@ -24,13 +24,7 @@ public:
     UPROPERTY()
         class UUserWidget* PlayerGui;
 
-    UFUNCTION(BlueprintCallable)
-        int GetGameTimer();
-
 protected:
     virtual void BeginPlay() override;
-    virtual void Tick(float DeltaTime) override;
-
-    int GameTimer = 0;
 	
 };

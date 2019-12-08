@@ -58,6 +58,7 @@ AFallingPawn::AFallingPawn()
     AudioComponent2 = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundEmitter2"));
     AudioComponent2->bAutoActivate = false;
     AudioComponent2->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+    AudioComponent2->SetupAttachment(RootComponent);
 
     pJumpComponent = CreateDefaultSubobject<UJumpComponent>("Jump");
 }
@@ -66,7 +67,7 @@ AFallingPawn::AFallingPawn()
 void AFallingPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+    GameTimer = 0;
 }
 
 void AFallingPawn::MoveRight(float value)
@@ -98,7 +99,12 @@ void AFallingPawn::Tick(float DeltaTime)
         SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
     }
     
+    GameTimer += DeltaTime;
+}
 
+int AFallingPawn::GetGameTimer()
+{
+    return GameTimer;
 }
 
 // Called to bind functionality to input

@@ -47,6 +47,9 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+       
+    UFUNCTION(BlueprintCallable)
+       int GetGameTimer();
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -57,5 +60,6 @@ public:
 private:
     float MovementRight;
     FVector CheckPoint = FVector(50,0,500);
+    float GameTimer;
 
 };
