@@ -22,6 +22,7 @@ AFallingPlatform::AFallingPlatform()
     BoxComponent->GetBodyInstance()->bLockXRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->GetBodyInstance()->bLockXTranslation = true;
+    BoxComponent->ComponentTags.Add("Block");
 
     PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("FallingPlatformSprite");
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");

@@ -22,6 +22,7 @@ AMovingPlatform::AMovingPlatform()
     BoxComponent->GetBodyInstance()->bLockXRotation = true;
     BoxComponent->GetBodyInstance()->bLockYTranslation = true;
     BoxComponent->GetBodyInstance()->bLockXTranslation = true;
+    BoxComponent->ComponentTags.Add("Block");
 
     PlayerSpriteComponent = CreateDefaultSubobject<UPaperSpriteComponent>("HoveringSprite");
     PlayerSpriteComponent->SetCollisionProfileName("NoCollision");

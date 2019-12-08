@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
+#include "WinBlock.h"
 #include "PaperSpriteComponent.h"
 #include "Components/BoxComponent.h"
-#include "WinBlock.h"
 
 // Sets default values
 AWinBlock::AWinBlock()

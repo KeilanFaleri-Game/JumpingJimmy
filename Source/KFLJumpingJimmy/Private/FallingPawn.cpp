@@ -4,8 +4,12 @@
 #include "FallingPawn.h"
 #include "Checkpoint.h"
 #include "EnemyActor.h"
+#include "JumpComponent.h"
 #include "PaperSpriteComponent.h"
+#include "Components/PrimitiveComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Components/AudioComponent.h"
+#include "Sound/SoundBase.h"
 #include "Camera/CameraComponent.h"
 #include "EngineUtils.h"
 #include "Components/BoxComponent.h"
@@ -51,6 +55,11 @@ AFallingPawn::AFallingPawn()
     FollowCameraComponent->SetOrthoWidth(2500.0f);
     FollowCameraComponent->SetupAttachment(SpringArmComponent);
 
+    AudioComponent2 = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundEmitter2"));
+    AudioComponent2->bAutoActivate = false;
+    AudioComponent2->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
+
+    pJumpComponent = CreateDefaultSubobject<UJumpComponent>("Jump");
 }
 
 // Called when the game starts or when spawned
@@ -65,9 +74,9 @@ void AFallingPawn::MoveRight(float value)
     MovementRight = value;
 }
 
-void AFallingPawn::MoveUp(float value)
+void AFallingPawn::Jump()
 {
-    MovementUp = value;
+    pJumpComponent->Jump();
 }
 
 // Called every frame
@@ -83,13 +92,7 @@ void AFallingPawn::Tick(float DeltaTime)
         //SET's the Actors new Location
         SetActorLocation(NewLocation);
     }
-    if (MovementUp != 0)
-    {
-        //Calculate a new location to move (ActorsCurrentLocation + (ActorsUpDirection * MovementDelta)
-        FVector NewLocation = GetActorLocation() + (GetActorUpVector() * MovementUp);
-        //SET's the Actors new Location
-        SetActorLocation(NewLocation);
-    }
+
     if (GetActorLocation().Z < -800.0f || GetActorLocation().Z > 3000.0f)
     {
         SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
@@ -105,15 +108,10 @@ void AFallingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
     //BINDS this Actors MoveRight function to the MoveRight input binding created in the Editor under EditProjectSettings->Input->AxisMapping
     //MoveRight(float value) will get called when the Axis Button is activated
-    PlayerInputComponent->BindAxis("MoveRight",
-        this,
-        &AFallingPawn::MoveRight);
+    PlayerInputComponent->BindAxis("MoveRight", this, &AFallingPawn::MoveRight);
 
     //BINDS this Actors MoveRight function to the MoveUp input binding created in the Editor under EditProjectSettings->Input->AxisMapping
-    //MoveUp(float value) will get called when the Axis Button is activated
-    PlayerInputComponent->BindAxis("MoveUp",
-        this,
-        &AFallingPawn::MoveUp);
+    PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &AFallingPawn::Jump);
 }
 
 void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -142,8 +140,19 @@ void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Other
     {
         for (TActorIterator<AEnemyActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
         {
+            AudioComponent2->SetSound(YayyySound);
+
+            AudioComponent2->Play();
+
             SetActorLocation(FVector(29295.0,0,100), false, nullptr, ETeleportType::TeleportPhysics);
         }
+    }
+
+    if (OtherComp->ComponentHasTag("Block"))
+    {
+        
+         pJumpComponent->Land();
+        
     }
 }
 

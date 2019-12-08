@@ -27,13 +27,22 @@ public:
     UPROPERTY(EditAnywhere, Category = "Player Camera")
         class UCameraComponent* FollowCameraComponent;
 
+    UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+        class UJumpComponent* pJumpComponent;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom", meta = (AllowPrivateAccess = "true"))
+        class UAudioComponent* AudioComponent2;
+
+    UPROPERTY(EditAnywhere, Category = "Custom", meta = (AllowPrivateAccess = "true"))
+        class USoundBase* YayyySound;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
     void MoveRight(float value);
 
-    void MoveUp(float value);
+    void Jump();
 
 public:	
 	// Called every frame
@@ -47,7 +56,6 @@ public:
 
 private:
     float MovementRight;
-    float MovementUp;
     FVector CheckPoint = FVector(50,0,500);
 
 };
