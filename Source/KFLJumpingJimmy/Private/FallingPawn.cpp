@@ -13,6 +13,7 @@
 #include "Camera/CameraComponent.h"
 #include "EngineUtils.h"
 #include "Components/BoxComponent.h"
+#include "CoinManager.h"
 #include "..\Public\FallingPawn.h"
 
 // Sets default values
@@ -52,15 +53,16 @@ AFallingPawn::AFallingPawn()
 
     FollowCameraComponent = CreateDefaultSubobject<UCameraComponent>("Player Follow Camera");
     FollowCameraComponent->SetProjectionMode(ECameraProjectionMode::Orthographic);
-    FollowCameraComponent->SetOrthoWidth(2500.0f);
+    FollowCameraComponent->SetOrthoWidth(3000.0f);
     FollowCameraComponent->SetupAttachment(SpringArmComponent);
 
     AudioComponent2 = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundEmitter2"));
     AudioComponent2->bAutoActivate = false;
     AudioComponent2->SetRelativeLocation(FVector(0.0f, 0.0f, 0.0f));
-    AudioComponent2->SetupAttachment(RootComponent);
 
     pJumpComponent = CreateDefaultSubobject<UJumpComponent>("Jump");
+
+    CoinManager = CreateDefaultSubobject<UCoinManager>("Coin");
 }
 
 // Called when the game starts or when spawned
@@ -94,7 +96,7 @@ void AFallingPawn::Tick(float DeltaTime)
         SetActorLocation(NewLocation);
     }
 
-    if (GetActorLocation().Z < -800.0f || GetActorLocation().Z > 3000.0f)
+    if (GetActorLocation().Z < -800.0f)
     {
         SetActorLocation(CheckPoint, false, nullptr, ETeleportType::TeleportPhysics);
     }
@@ -122,7 +124,6 @@ void AFallingPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Blue, "POOP " + OtherComp->GetName());
 
     if (OtherComp->ComponentHasTag("Checkpoint"))
     {
@@ -146,10 +147,8 @@ void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Other
     {
         for (TActorIterator<AEnemyActor> ActorItr(GetWorld()); ActorItr; ++ActorItr)
         {
-            AudioComponent2->SetSound(YayyySound);
-
-            AudioComponent2->Play();
-
+           
+            PlayEndSound();
             SetActorLocation(FVector(29295.0,0,100), false, nullptr, ETeleportType::TeleportPhysics);
         }
     }
@@ -160,5 +159,25 @@ void AFallingPawn::OnHit(UPrimitiveComponent* OverlappedComponent, AActor* Other
          pJumpComponent->Land();
         
     }
+    
+    if (OtherComp->ComponentHasTag("Coin"))
+    {
+        CoinManager->AddCoin();
+        OtherActor->Destroy();
+    }
 }
 
+int AFallingPawn::getNumCoins()
+{
+    return CoinManager->getNumCoins();
+}
+
+void AFallingPawn::PlayEndSound()
+{
+    if (AudioComponent2 != nullptr)
+    {
+        AudioComponent2->SetSound(YayyySound);
+
+        AudioComponent2->Play();
+    }
+}

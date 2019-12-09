@@ -72,14 +72,14 @@ void AEnemyActor::Tick(float DeltaTime)
         {
             MoveToNextPatrolPoint();
         }
-        SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(), CurrentPatrolPoint->GetActorLocation(), DeltaTime, 300.f));
+        SetActorLocation(FMath::VInterpConstantTo(GetActorLocation(), CurrentPatrolPoint->GetActorLocation(), DeltaTime, 200.f));
     }
 
     //IF Target is NOT EQUAL to nullptr
     if (Target != nullptr && !(bPatrol))
     {
         //DECLARE a variable called targetLocation of type FVector and assign it to the return value of FMath::VInterpConstantTo(..) passing in --> GetActorLocation(), Target->GetActorLocation(), DeltaTime, 600.0f
-        FVector targetLocation = FMath::VInterpConstantTo(GetActorLocation(), Target->GetActorLocation(), DeltaTime, 600.0f);
+        FVector targetLocation = FMath::VInterpConstantTo(GetActorLocation(), Target->GetActorLocation(), DeltaTime, 300.0f);
         //CALL  SetActorLocation(..) passing in targetLocation
         SetActorLocation(targetLocation);
     }

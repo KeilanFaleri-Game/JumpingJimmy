@@ -30,6 +30,9 @@ public:
     UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
         class UJumpComponent* pJumpComponent;
 
+    UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+        class UCoinManager* CoinManager;
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom", meta = (AllowPrivateAccess = "true"))
         class UAudioComponent* AudioComponent2;
 
@@ -56,6 +59,11 @@ public:
 
     UFUNCTION()
         void OnHit(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+    UFUNCTION(BlueprintCallable)
+        int getNumCoins();
+
+    void PlayEndSound();
 
 private:
     float MovementRight;

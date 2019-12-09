@@ -49,7 +49,7 @@ protected:
         float ForceScalarZ = 800000.0f;
 
     UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Custom", meta = (AllowPrivateAccess = "true"))
-        float JumpPowerZ = 30.0f;
+        float JumpPowerZ = 20.0f;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Custom", meta = (AllowPrivateAccess = "true"))
         class UAudioComponent* AudioComponent;

@@ -7,7 +7,7 @@
 AMyHUD::AMyHUD()
 {
     //The following lines sets the PlayerUI blueprint to the TSubclassof variable via code
-    static ConstructorHelpers::FClassFinder<UUserWidget> playerHud(TEXT("/Game/Blueprints/UI/PlayerUI"));
+    static ConstructorHelpers::FClassFinder<UUserWidget> playerHud(TEXT("/Game/Blueprints/PlayerHUD"));
     if (playerHud.Succeeded())
         PlayerGuiClass = playerHud.Class;
 }
